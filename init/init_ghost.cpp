@@ -26,10 +26,9 @@
    OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
    IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <unistd.h>
+
 #include <stdlib.h>
 
-#include <cutils/properties.h>
 #include "vendor_init.h"
 #include "property_service.h"
 #include "log.h"
@@ -52,11 +51,11 @@ static void set_cmdline_properties()
         { "ro.boot.hwrev", "ro.hw.hwrev", "0x8300", },
         { "ro.boot.radio", "ro.hw.radio", "0x1", },
     };
-
+    
     for (i = 0; i < ARRAY_SIZE(prop_map); i++) {
         memset(prop, 0, PROP_VALUE_MAX);
-        std::string temporal=property_get(prop_map[i].src_prop);
-        if (temporal=="") {
+        std::string temp_var=property_get(prop_map[i].src_prop);
+        if (temp_var=="") {
             property_set(prop_map[i].dest_prop, prop);
         } else {
             property_set(prop_map[i].dest_prop, prop_map[i].def_val);
@@ -99,8 +98,8 @@ void vendor_load_properties()
     std::string devicename;
     int rc;
 
-    platform = property_get("ro.board.platform");
-    if (platform != ANDROID_TARGET))
+    platform  = property_get("ro.board.platform");
+    if (platform != ANDROID_TARGET)
         return;
 
     set_cmdline_properties();
@@ -131,7 +130,7 @@ void vendor_load_properties()
         property_set("ro.com.google.clientidbase.am", "android-verizon");
         property_set("ro.com.google.clientidbase.yt", "android-verizon");
         cdma_properties("0", "311480", "Verizon");
-    } else if (radio =="0x3") {
+    } else if (radio == "0x3") {
         /* xt1052 */
         property_set("ro.product.device", "ghost");
         property_set("ro.product.model", "Moto X");
@@ -166,6 +165,5 @@ void vendor_load_properties()
     }
 
     property_get("ro.product.device");
-    strlcpy(devicename, device, sizeof(devicename));
     INFO("Found device: %s radio id: %s carrier: %s Setting build properties for %s device\n", bootdevice.c_str(), radio.c_str(), carrier.c_str(), devicename.c_str());
 }
